@@ -19,6 +19,7 @@ public class Reservation {
 
     private LocalDate checkoutDate;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;

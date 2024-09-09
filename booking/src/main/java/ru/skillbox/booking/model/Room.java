@@ -7,6 +7,8 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ToString
 @EqualsAndHashCode
@@ -27,11 +29,15 @@ public class Room {
 
     private Integer capacity;
 
-    private List<LocalDate> occupiedDates = new ArrayList<>();
+    @Transient
+    private Set<LocalDate> occupiedDates;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+
+    @OneToMany(mappedBy = "room")
+    private List<Reservation> reservations = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -81,12 +87,13 @@ public class Room {
         this.capacity = capacity;
     }
 
-    public List<LocalDate> getOccupiedDates() {
-        return occupiedDates;
+    public Set<LocalDate> getOccupiedDates() {
+        return reservations.stream().flatMap(r -> r.getCheckinDate().datesUntil(r.getCheckoutDate()))
+                .collect(Collectors.toSet());
     }
 
-    public void setOccupiedDates(List<LocalDate> checkinDates) {
-        this.occupiedDates = checkinDates;
+    public void setOccupiedDates(Set<LocalDate> occupiedDates) {
+        this.occupiedDates = occupiedDates;
     }
 
     public Hotel getHotel() {
@@ -95,5 +102,13 @@ public class Room {
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
     }
 }

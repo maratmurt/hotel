@@ -3,6 +3,7 @@ package ru.skillbox.booking.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.skillbox.booking.mapper.NullAwareMapper;
 import ru.skillbox.booking.model.Hotel;
@@ -57,5 +58,9 @@ public class RoomService implements CrudService<Room> {
     @Override
     public void deleteById(Long id) {
         roomRepository.deleteById(id);
+    }
+
+    public List<Room> findAllWithFilter(Integer page, Integer size, Specification<Room> specification) {
+        return roomRepository.findAll(specification, PageRequest.of(page, size)).toList();
     }
 }

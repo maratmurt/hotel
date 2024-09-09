@@ -1,7 +1,11 @@
 package ru.skillbox.booking.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @EqualsAndHashCode
@@ -26,6 +30,10 @@ public class Hotel {
 
     @Column(name = "ratings_count")
     private Integer ratingsCount = 0;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "hotel")
+    private List<Room> rooms = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -89,5 +97,13 @@ public class Hotel {
 
     public void setRatingsCount(Integer ratingsCount) {
         this.ratingsCount = ratingsCount;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
     }
 }

@@ -1,14 +1,18 @@
 package ru.skillbox.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.booking.dto.room.RoomFilter;
 import ru.skillbox.booking.dto.room.RoomRequest;
 import ru.skillbox.booking.dto.room.RoomResponse;
 import ru.skillbox.booking.mapper.RoomMapper;
 import ru.skillbox.booking.model.Room;
 import ru.skillbox.booking.service.RoomService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/room")
@@ -45,6 +49,19 @@ public class RoomController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         roomService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<RoomResponse>> findAllWithFilter(@RequestParam Integer page,
+                                                                @RequestParam Integer size,
+                                                                @RequestBody RoomFilter filter) {
+        Specification<Room> specification = roomMapper.filterToSpecification(filter);
+        List<RoomResponse> responseList = roomService.findAllWithFilter(page, size, specification)
+                .stream()
+                .map(roomMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(responseList);
     }
 
 }
