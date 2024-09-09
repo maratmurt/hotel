@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @ToString
@@ -26,7 +27,7 @@ public class Room {
 
     private Integer capacity;
 
-    private List<Date> checkinDates;
+    private List<LocalDate> occupiedDates = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
@@ -80,12 +81,12 @@ public class Room {
         this.capacity = capacity;
     }
 
-    public List<Date> getCheckinDates() {
-        return checkinDates;
+    public List<LocalDate> getOccupiedDates() {
+        return occupiedDates;
     }
 
-    public void setCheckinDates(List<Date> checkinDates) {
-        this.checkinDates = checkinDates;
+    public void setOccupiedDates(List<LocalDate> checkinDates) {
+        this.occupiedDates = checkinDates;
     }
 
     public Hotel getHotel() {
