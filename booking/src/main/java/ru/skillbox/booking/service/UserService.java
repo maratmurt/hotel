@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.booking.mapper.NullAwareMapper;
 import ru.skillbox.booking.model.User;
@@ -19,6 +20,8 @@ public class UserService implements CrudService<User> {
     private final UserRepository userRepository;
 
     private final NullAwareMapper nullAwareMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAll(Integer page, Integer size) {
@@ -36,6 +39,8 @@ public class UserService implements CrudService<User> {
         if (userRepository.existsByNameOrEmail(user.getName(), user.getEmail())) {
             throw new ValidationException("Пользователь с такими данными уже существует!");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }

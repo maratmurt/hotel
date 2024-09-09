@@ -24,7 +24,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toResponse(userService.findById(id)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<UserResponse> create(@RequestBody UserRequest request,
                                                @RequestParam String role) {
         User user = userMapper.toEntity(request);

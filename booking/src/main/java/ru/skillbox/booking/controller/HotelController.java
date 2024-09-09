@@ -2,6 +2,7 @@ package ru.skillbox.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.skillbox.booking.dto.hotel.HotelListResponse;
 import ru.skillbox.booking.dto.hotel.HotelRequest;
@@ -30,12 +31,14 @@ public class HotelController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HotelResponse> create(@RequestBody HotelRequest request) {
         Hotel hotel = hotelService.create(hotelMapper.toEntity(request));
         return ResponseEntity.ok(hotelMapper.toResponse(hotel));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HotelResponse> update(@PathVariable Long id, @RequestBody HotelRequest request) {
         Hotel hotel = hotelMapper.toEntity(request);
         hotel.setId(id);
@@ -43,6 +46,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         hotelService.deleteById(id);
         return ResponseEntity.noContent().build();

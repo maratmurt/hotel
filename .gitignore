@@ -8,6 +8,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+/.idea/JetClient/
+/.idea/uiDesigner.xml
 *.iws
 *.iml
 *.ipr
@@ -38,4 +40,3 @@ build/
 .DS_Store
 
 /.jetclient/
-/.idea/JetClient/
