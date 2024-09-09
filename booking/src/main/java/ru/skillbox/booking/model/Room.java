@@ -7,8 +7,6 @@ import lombok.ToString;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ToString
 @EqualsAndHashCode
@@ -29,8 +27,14 @@ public class Room {
 
     private Integer capacity;
 
-    @Transient
-    private Set<LocalDate> occupiedDates;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "occupied_dates",
+            joinColumns = @JoinColumn(name = "room_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"room_id", "date"})
+    )
+    @Column(name = "date")
+    private List<LocalDate> occupiedDates;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
@@ -87,12 +91,11 @@ public class Room {
         this.capacity = capacity;
     }
 
-    public Set<LocalDate> getOccupiedDates() {
-        return reservations.stream().flatMap(r -> r.getCheckinDate().datesUntil(r.getCheckoutDate()))
-                .collect(Collectors.toSet());
+    public List<LocalDate> getOccupiedDates() {
+        return occupiedDates;
     }
 
-    public void setOccupiedDates(Set<LocalDate> occupiedDates) {
+    public void setOccupiedDates(List<LocalDate> occupiedDates) {
         this.occupiedDates = occupiedDates;
     }
 

@@ -14,10 +14,10 @@ import java.util.Date;
 @Order(2)
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<ErrorDetails> handleRuntimeException(Exception e, WebRequest request) {
-//        ErrorDetails errorDetails = new ErrorDetails(new Date(), e.getMessage(), request.getDescription(false));
-//        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDetails> handleRuntimeException(Exception e, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), e.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }

@@ -1,5 +1,9 @@
 package ru.skillbox.booking.model;
 
+import jakarta.persistence.criteria.ListJoin;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -46,13 +50,26 @@ public class RoomSpecification {
 
     public static Specification<Room> byDates(LocalDate checkinDate, LocalDate checkoutDate) {
         return (root, query, builder) -> {
-            if (checkinDate == null || checkoutDate == null) {
+            if (checkinDate == null || checkoutDate == null || query == null) {
                 return builder.conjunction();
             }
-            List<LocalDate> requestedDates = checkinDate.datesUntil(checkoutDate).toList();
 
-            //todo: check occupied dates
-            return builder.conjunction();
+            Subquery<Room> subquery = query.subquery(Room.class);
+            Root<Room> subRoot = subquery.from(Room.class);
+            ListJoin<Room, LocalDate> occupiedDatesJoin = subRoot.joinList("occupiedDates");
+
+            Predicate datesOverlap = builder.and(
+                    builder.lessThanOrEqualTo(occupiedDatesJoin, checkoutDate),
+                    builder.greaterThanOrEqualTo(occupiedDatesJoin, checkinDate)
+            );
+
+            subquery.select(subRoot)
+                    .where(builder.and(
+                            builder.equal(subRoot.get("id"), root.get("id")),
+                            datesOverlap
+                    ));
+
+            return builder.exists(subquery).not();
         };
     }
 

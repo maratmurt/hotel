@@ -54,7 +54,7 @@ public class ReservationService implements CrudService<Reservation> {
         List<LocalDate> requestedDates = reservation.getCheckinDate()
                 .datesUntil(reservation.getCheckoutDate())
                 .toList();
-        List<LocalDate> occupiedDates = room.getOccupiedDates().stream().toList();
+        List<LocalDate> occupiedDates = room.getOccupiedDates();
         List<LocalDate> overlappingDates = requestedDates.stream()
                 .filter(occupiedDates::contains)
                 .toList();
@@ -64,6 +64,8 @@ public class ReservationService implements CrudService<Reservation> {
                     overlappingDates.get(0),
                     overlappingDates.get(overlappingDates.size() - 1)));
         }
+        occupiedDates.addAll(requestedDates);
+        room.setOccupiedDates(occupiedDates);
 
         return reservationRepository.save(reservation);
     }
