@@ -18,6 +18,8 @@ public class Hotel {
 
     private String city;
 
+    private String address;
+
     private Double distance;
 
     private Double rating = 0D;
@@ -55,6 +57,14 @@ public class Hotel {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Double getDistance() {

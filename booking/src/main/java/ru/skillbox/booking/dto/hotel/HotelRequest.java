@@ -4,6 +4,7 @@ public record HotelRequest(
         String name,
         String title,
         String city,
+        String address,
         Double distance
 ) {
 }
