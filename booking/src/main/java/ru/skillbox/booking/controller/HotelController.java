@@ -52,4 +52,9 @@ public class HotelController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/rate")
+    public ResponseEntity<HotelResponse> addRating(@PathVariable Long id, @RequestParam Integer rating) {
+        return ResponseEntity.ok(hotelMapper.toResponse(hotelService.addRating(id, rating)));
+    }
+
 }

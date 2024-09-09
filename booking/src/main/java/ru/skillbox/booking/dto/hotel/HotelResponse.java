@@ -5,7 +5,7 @@ public record HotelResponse(
         String name,
         String city,
         Double distance,
-        Integer rating,
+        Double rating,
         Integer ratingsCount
 ) {
 }

@@ -20,10 +20,10 @@ public class Hotel {
 
     private Double distance;
 
-    private Integer rating;
+    private Double rating = 0D;
 
     @Column(name = "ratings_count")
-    private Integer ratingsCount;
+    private Integer ratingsCount = 0;
 
     public Long getId() {
         return id;
@@ -65,11 +65,11 @@ public class Hotel {
         this.distance = distance;
     }
 
-    public Integer getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

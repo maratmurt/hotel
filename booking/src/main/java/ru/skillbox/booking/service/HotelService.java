@@ -9,7 +9,10 @@ import ru.skillbox.booking.model.Hotel;
 import ru.skillbox.booking.repository.HotelRepository;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +53,28 @@ public class HotelService implements CrudService<Hotel> {
     @Override
     public void deleteById(Long id) {
         hotelRepository.deleteById(id);
+    }
+
+    public Hotel addRating(Long id, Integer newMark) {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(()->
+                new EntityNotFoundException("Запрошенный отель не найден!"));
+        double rating = hotel.getRating();
+        int ratingsCount = hotel.getRatingsCount();
+
+        if (ratingsCount == 0) {
+            rating = Double.valueOf(newMark);
+        } else {
+            double totalRating = rating * ratingsCount;
+            totalRating = totalRating - rating + newMark;
+            rating = Double.parseDouble(new DecimalFormat("#.#", new DecimalFormatSymbols(Locale.US))
+                    .format(totalRating / ratingsCount));
+        }
+        ratingsCount++;
+
+        hotel.setRating(rating);
+        hotel.setRatingsCount(ratingsCount);
+
+        return hotelRepository.save(hotel);
     }
 
 }
