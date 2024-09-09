@@ -36,9 +36,9 @@ public class RoomService implements CrudService<Room> {
 
     @Override
     public Room create(Room room) {
-        Hotel existingHotel = hotelRepository.findById(room.getHotel().getId()).orElseThrow(()->
+        Hotel hotel = hotelRepository.findById(room.getHotel().getId()).orElseThrow(()->
                 new EntityNotFoundException("Отель не найден!"));
-        room.setHotel(existingHotel);
+        room.setHotel(hotel);
         return roomRepository.save(room);
     }
 

@@ -33,7 +33,7 @@ public class UserService implements CrudService<User> {
 
     @Override
     public User create(User user) {
-        if (userRepository.existsByNameAndEmail(user.getName(), user.getEmail())) {
+        if (userRepository.existsByNameOrEmail(user.getName(), user.getEmail())) {
             throw new ValidationException("Пользователь с такими данными уже существует!");
         }
 
