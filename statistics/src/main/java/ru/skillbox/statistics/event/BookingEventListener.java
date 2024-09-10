@@ -18,49 +18,24 @@ public class BookingEventListener {
     private final StatisticsService statisticsService;
 
     @KafkaListener(
-            topics = "registration-topic",
+            topics = {"registration-topic", "reservation-topic"},
             groupId = "${app.kafka.group-id}",
             containerFactory = "registrationEventListenerContainerFactory"
     )
-    public void listenToRegistration(
-            @Payload RegistrationEvent event,
-            @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key,
+    public void listen(
+            @Payload BookingEvent event,
+            @Header(value = KafkaHeaders.RECEIVED_KEY) String key,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.RECEIVED_PARTITION) Integer partition,
             @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp
     ) {
         log.info("Received message: {}", event);
-        log.info("Key: {}; Partition: {}; Topic: {}; Timestamp: {}", key, partition, topic, timestamp);
+        log.info("Key: {}; Topic: {}; Timestamp: {}", key, topic, timestamp);
 
         Item item = new Item();
         item.setKey(key);
         item.setTopic(topic);
         item.setTimestamp(timestamp);
-        item.setEvent(event);
-
-        statisticsService.create(item);
-    }
-
-    @KafkaListener(
-            topics = "reservation-topic",
-            groupId = "${app.kafka.group-id}",
-            containerFactory = "reservationEventListenerContainerFactory"
-    )
-    public void listenToReservation(
-            @Payload ReservationEvent event,
-            @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key,
-            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.RECEIVED_PARTITION) Integer partition,
-            @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long timestamp
-    ) {
-        log.info("Received message: {}", event);
-        log.info("Key: {}; Partition: {}; Topic: {}; Timestamp: {}", key, partition, topic, timestamp);
-
-        Item item = new Item();
-        item.setKey(key);
-        item.setTopic(topic);
-        item.setTimestamp(timestamp);
-        item.setEvent(event);
+        item.setDetails(event);
 
         statisticsService.create(item);
     }

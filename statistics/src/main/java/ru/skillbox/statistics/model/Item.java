@@ -3,6 +3,7 @@ package ru.skillbox.statistics.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import ru.skillbox.statistics.event.BookingEvent;
 
 @Document(collection = "booking")
 @Data
@@ -15,6 +16,6 @@ public class Item {
 
     private Long timestamp;
 
-    private Object event;
+    private BookingEvent details;
 
 }

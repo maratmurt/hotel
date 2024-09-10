@@ -1,4 +1,16 @@
 package ru.skillbox.statistics.event;
 
-public record RegistrationEvent(Long userId) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegistrationEvent extends BookingEvent {
+
+    private Long userId;
+
 }
