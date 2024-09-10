@@ -4,14 +4,17 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.skillbox.statistics.event.RegistrationEvent;
 import ru.skillbox.booking.mapper.NullAwareMapper;
 import ru.skillbox.booking.model.User;
 import ru.skillbox.booking.repository.UserRepository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class UserService implements CrudService<User> {
     private final NullAwareMapper nullAwareMapper;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final KafkaTemplate<String, RegistrationEvent> kafkaTemplate;
 
     @Override
     public List<User> findAll(Integer page, Integer size) {
@@ -41,8 +46,12 @@ public class UserService implements CrudService<User> {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user = userRepository.save(user);
 
-        return userRepository.save(user);
+        RegistrationEvent event = new RegistrationEvent(user.getId());
+        kafkaTemplate.send("registration-topic", UUID.randomUUID().toString(), event);
+
+        return user;
     }
 
     @Override

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.skillbox.booking.mapper.NullAwareMapper;
 import ru.skillbox.booking.model.Reservation;
@@ -12,11 +13,13 @@ import ru.skillbox.booking.model.User;
 import ru.skillbox.booking.repository.ReservationRepository;
 import ru.skillbox.booking.repository.RoomRepository;
 import ru.skillbox.booking.repository.UserRepository;
+import ru.skillbox.statistics.event.ReservationEvent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,8 @@ public class ReservationService implements CrudService<Reservation> {
     private final UserRepository userRepository;
 
     private final NullAwareMapper nullAwareMapper;
+
+    private final KafkaTemplate<String, ReservationEvent> kafkaTemplate;
 
     @Override
     public List<Reservation> findAll(Integer page, Integer size) {
@@ -67,7 +72,12 @@ public class ReservationService implements CrudService<Reservation> {
         occupiedDates.addAll(requestedDates);
         room.setOccupiedDates(occupiedDates);
 
-        return reservationRepository.save(reservation);
+        reservation = reservationRepository.save(reservation);
+        ReservationEvent event = new ReservationEvent(reservation.getUser().getId(),
+                reservation.getCheckinDate(), reservation.getCheckoutDate());
+        kafkaTemplate.send("reservation-topic", UUID.randomUUID().toString(), event);
+
+        return reservation;
     }
 
     @Override

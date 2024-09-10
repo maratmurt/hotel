@@ -1,5 +1,6 @@
 package ru.skillbox.booking.exception;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.Date;
 
 @ControllerAdvice
 @Order(2)
+@ConditionalOnProperty(name = "app.global-exception-handler.enable")
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)

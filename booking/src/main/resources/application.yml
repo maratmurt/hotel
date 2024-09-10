@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/app_db
     username: postgres
@@ -10,3 +10,11 @@ spring:
       schema: app_schema
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS app_schema
       connection-timeout: 10000
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+  global-exception-handler:
+    enable: false
+  kafka:
+    group-id: "hotel-group-id"
