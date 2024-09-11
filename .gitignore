@@ -41,3 +41,4 @@ build/
 
 /.jetclient/
 /.idea/mongoSettings.xml
+/info/

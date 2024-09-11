@@ -8,3 +8,6 @@ spring:
 app:
   kafka:
     group-id: "hotel-group-id"
+
+server:
+  port: 8081
