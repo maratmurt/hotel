@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.statistics.service.StatisticsService;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
@@ -25,11 +23,7 @@ public class StatisticsController {
     public ResponseEntity<Resource> download(@RequestParam String fileName) {
         String filePath = "files/" + fileName;
 
-        try {
-            statisticsService.exportToCsv(filePath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        statisticsService.exportToCsv(filePath);
 
         Resource fileResource = new ClassPathResource(filePath);
 

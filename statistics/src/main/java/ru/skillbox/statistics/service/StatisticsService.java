@@ -26,42 +26,44 @@ public class StatisticsService {
         return statisticsRepository.save(item);
     }
 
-    public void exportToCsv(String filePath) throws IOException {
+    public void exportToCsv(String filePath) {
         List<Item> items = statisticsRepository.findAll();
 
-        FileWriter fileWriter = new FileWriter(filePath);
-        CSVWriter csvWriter = new CSVWriter(fileWriter);
+        try(FileWriter fileWriter = new FileWriter(filePath);
+            CSVWriter csvWriter = new CSVWriter(fileWriter)) {
 
-        String[] headers = {"Key", "Topic", "Timestamp", "User ID", "Check-in date", "Check-out date"};
-        csvWriter.writeNext(headers);
+            String[] headers = {"Key", "Topic", "Timestamp", "User ID", "Check-in date", "Check-out date"};
+            csvWriter.writeNext(headers);
 
-        items.forEach(item -> {
-            long timestampValue = item.getTimestamp();
-            Instant instant = Instant.ofEpochMilli(timestampValue);
-            String timestamp = instant.toString();
-            String topic = item.getTopic();
-            BookingEvent event = item.getDetails();
-            String checkinDate = "";
-            String checkoutDate = "";
-            if (topic.equals("reservation-topic")) {
-                ReservationEvent reservationEvent = (ReservationEvent) event;
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-                checkinDate = reservationEvent.getCheckinDate().format(formatter);
-                checkoutDate = reservationEvent.getCheckoutDate().format(formatter);
-            }
-            String[] data = {
-                    item.getKey(),
-                    item.getTopic(),
-                    timestamp,
-                    event.getUserId().toString(),
-                    checkinDate,
-                    checkoutDate
-            };
-            log.info(String.join(", ", data));
-        });
+            items.forEach(item -> {
+                long timestampValue = item.getTimestamp();
+                Instant instant = Instant.ofEpochMilli(timestampValue);
+                String timestamp = instant.toString();
+                String topic = item.getTopic();
+                BookingEvent event = item.getDetails();
+                String checkinDate = "";
+                String checkoutDate = "";
+                if (topic.equals("reservation-topic")) {
+                    ReservationEvent reservationEvent = (ReservationEvent) event;
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+                    checkinDate = reservationEvent.getCheckinDate().format(formatter);
+                    checkoutDate = reservationEvent.getCheckoutDate().format(formatter);
+                }
+                String[] data = {
+                        item.getKey(),
+                        item.getTopic(),
+                        timestamp,
+                        event.getUserId().toString(),
+                        checkinDate,
+                        checkoutDate
+                };
+                csvWriter.writeNext(data);
+                log.info(String.join(", ", data));
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        csvWriter.close();
-        fileWriter.close();
     }
 
 }
