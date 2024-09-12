@@ -15,6 +15,6 @@ spring:
 
 app:
   global-exception-handler:
-    enable: false
+    enable: true
   kafka:
     group-id: "hotel-group-id"
