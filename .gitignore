@@ -4,12 +4,7 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-/.idea/JetClient/
-/.idea/uiDesigner.xml
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -42,4 +37,4 @@ build/
 /.jetclient/
 /.idea/mongoSettings.xml
 /info/
-/files/
+/download/

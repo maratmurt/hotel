@@ -51,7 +51,7 @@ public class StatisticsService {
                 }
                 String[] data = {
                         item.getKey(),
-                        item.getTopic(),
+                        topic,
                         timestamp,
                         event.getUserId().toString(),
                         checkinDate,

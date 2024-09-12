@@ -1,6 +1,7 @@
 package ru.skillbox.statistics.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +20,12 @@ public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
+    @Value("${app.statistics.download-folder}")
+    private String downloadFolder;
+
     @GetMapping("/download")
     public ResponseEntity<Resource> download(@RequestParam String fileName) {
-        String filePath = "files/" + fileName;
+        String filePath = downloadFolder + fileName;
 
         statisticsService.exportToCsv(filePath);
 
