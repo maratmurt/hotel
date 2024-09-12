@@ -9,8 +9,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import ru.skillbox.statistics.event.RegistrationEvent;
-import ru.skillbox.statistics.event.ReservationEvent;
+import ru.skillbox.statistics.event.BookingEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ public class KafkaConfig {
     private String kafkaGroupId;
 
     @Bean
-    public ConsumerFactory<String, RegistrationEvent> registrationEventConsumerFactory() {
+    public ConsumerFactory<String, BookingEvent> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -38,36 +37,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent> registrationEventListenerContainerFactory(
-            ConsumerFactory<String, RegistrationEvent> registrationEventConsumerFactory
+    public ConcurrentKafkaListenerContainerFactory<String, BookingEvent> containerFactory(
+            ConsumerFactory<String, BookingEvent> registrationEventConsumerFactory
     ) {
-        ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent> factory =
+        ConcurrentKafkaListenerContainerFactory<String, BookingEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(registrationEventConsumerFactory);
-
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, ReservationEvent> reservationEventConsumerFactory() {
-        Map<String, Object> config = new HashMap<>();
-
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaGroupId);
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>());
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ReservationEvent> reservationEventListenerContainerFactory(
-            ConsumerFactory<String, ReservationEvent> reservationEventConsumerFactory
-    ) {
-        ConcurrentKafkaListenerContainerFactory<String, ReservationEvent> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(reservationEventConsumerFactory);
 
         return factory;
     }

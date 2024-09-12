@@ -20,7 +20,7 @@ public class BookingEventListener {
     @KafkaListener(
             topics = {"registration-topic", "reservation-topic"},
             groupId = "${app.kafka.group-id}",
-            containerFactory = "registrationEventListenerContainerFactory"
+            containerFactory = "containerFactory"
     )
     public void listen(
             @Payload BookingEvent event,
