@@ -2,7 +2,6 @@ package ru.skillbox.statistics.service;
 
 import com.opencsv.CSVWriter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.skillbox.statistics.event.BookingEvent;
 import ru.skillbox.statistics.event.ReservationEvent;
@@ -17,10 +16,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class StatisticsService {
 
     private final StatisticsRepository statisticsRepository;
+
+    private static final String[] HEADERS = {"Key", "Topic", "Timestamp", "User ID", "Check-in date", "Check-out date"};
 
     public Item create(Item item) {
         return statisticsRepository.save(item);
@@ -32,8 +32,7 @@ public class StatisticsService {
         try(FileWriter fileWriter = new FileWriter(filePath);
             CSVWriter csvWriter = new CSVWriter(fileWriter)) {
 
-            String[] headers = {"Key", "Topic", "Timestamp", "User ID", "Check-in date", "Check-out date"};
-            csvWriter.writeNext(headers);
+            csvWriter.writeNext(HEADERS);
 
             items.forEach(item -> {
                 long timestampValue = item.getTimestamp();
@@ -58,7 +57,6 @@ public class StatisticsService {
                         checkoutDate
                 };
                 csvWriter.writeNext(data);
-                log.info(String.join(", ", data));
             });
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -28,6 +28,11 @@ public class UserService implements CrudService<User> {
 
     private final KafkaTemplate<String, RegistrationEvent> kafkaTemplate;
 
+    private static final String[] MESSAGES = {
+            "Запрошенный пользователь не найден!",
+            "Пользователь с такими данными уже существует!"
+    };
+
     @Override
     public List<User> findAll(Integer page, Integer size) {
         return userRepository.findAll(PageRequest.of(page, size)).toList();
@@ -36,13 +41,13 @@ public class UserService implements CrudService<User> {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный пользователь не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
     }
 
     @Override
     public User create(User user) {
         if (userRepository.existsByNameOrEmail(user.getName(), user.getEmail())) {
-            throw new ValidationException("Пользователь с такими данными уже существует!");
+            throw new ValidationException(MESSAGES[1]);
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -57,7 +62,7 @@ public class UserService implements CrudService<User> {
     @Override
     public User update(User updatedUser) {
         User existingUser = userRepository.findById(updatedUser.getId()).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный пользователь не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
         try {
             nullAwareMapper.copyProperties(existingUser, updatedUser);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -73,6 +78,6 @@ public class UserService implements CrudService<User> {
 
     public User findByName(String name) {
         return userRepository.findByName(name).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный пользователь не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
     }
 }

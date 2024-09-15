@@ -24,6 +24,11 @@ public class RoomService implements CrudService<Room> {
 
     private final HotelRepository hotelRepository;
 
+    private static final String[] MESSAGES = {
+            "Запрошенная комната не найдена!",
+            "Отель не найден!"
+    };
+
     @Override
     public List<Room> findAll(Integer page, Integer size) {
         return roomRepository.findAll(PageRequest.of(page, size)).toList();
@@ -32,13 +37,13 @@ public class RoomService implements CrudService<Room> {
     @Override
     public Room findById(Long id) {
         return roomRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("Запрошенная комната не найдена!"));
+                new EntityNotFoundException(MESSAGES[0]));
     }
 
     @Override
     public Room create(Room room) {
         Hotel hotel = hotelRepository.findById(room.getHotel().getId()).orElseThrow(()->
-                new EntityNotFoundException("Отель не найден!"));
+                new EntityNotFoundException(MESSAGES[1]));
         room.setHotel(hotel);
         return roomRepository.save(room);
     }
@@ -46,7 +51,7 @@ public class RoomService implements CrudService<Room> {
     @Override
     public Room update(Room updatedRoom) {
         Room existingRoom = roomRepository.findById(updatedRoom.getId()).orElseThrow(()->
-                new EntityNotFoundException("Запрошенная комната не найдена!"));
+                new EntityNotFoundException(MESSAGES[0]));
         try {
             nullAwareMapper.copyProperties(existingRoom, updatedRoom);
         } catch (IllegalAccessException | InvocationTargetException e) {

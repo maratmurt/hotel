@@ -23,6 +23,10 @@ public class HotelService implements CrudService<Hotel> {
 
     private final NullAwareMapper nullAwareMapper;
 
+    private static final String[] MESSAGES = {
+            "Запрошенный отель не найден!"
+    };
+
     @Override
     public List<Hotel> findAll(Integer page, Integer size) {
         return hotelRepository.findAll(PageRequest.of(page, size)).toList();
@@ -31,7 +35,7 @@ public class HotelService implements CrudService<Hotel> {
     @Override
     public Hotel findById(Long id) {
         return hotelRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный отель не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
     }
 
     @Override
@@ -42,7 +46,7 @@ public class HotelService implements CrudService<Hotel> {
     @Override
     public Hotel update(Hotel updatedHotel) {
         Hotel existingHotel = hotelRepository.findById(updatedHotel.getId()).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный отель не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
         try {
             nullAwareMapper.copyProperties(existingHotel, updatedHotel);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -58,7 +62,7 @@ public class HotelService implements CrudService<Hotel> {
 
     public Hotel addRating(Long id, Integer newMark) {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("Запрошенный отель не найден!"));
+                new EntityNotFoundException(MESSAGES[0]));
         double rating = hotel.getRating();
         int ratingsCount = hotel.getRatingsCount();
 

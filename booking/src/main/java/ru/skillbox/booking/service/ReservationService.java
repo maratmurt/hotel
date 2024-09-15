@@ -35,6 +35,12 @@ public class ReservationService implements CrudService<Reservation> {
 
     private final KafkaTemplate<String, ReservationEvent> kafkaTemplate;
 
+    private static final String[] MESSAGES = {
+            "Запрошенная бронь не найдена!",
+            "Пользователь не найден!",
+            "Комната не найдена!"
+    };
+
     @Override
     public List<Reservation> findAll(Integer page, Integer size) {
         return reservationRepository.findAll(PageRequest.of(page, size)).toList();
@@ -43,17 +49,17 @@ public class ReservationService implements CrudService<Reservation> {
     @Override
     public Reservation findById(Long id) {
         return reservationRepository.findById(id).orElseThrow(()->
-                new EntityNotFoundException("Запрошенная бронь не найдена!"));
+                new EntityNotFoundException(MESSAGES[0]));
     }
 
     @Override
     public Reservation create(Reservation reservation) {
         User user = userRepository.findById(reservation.getUser().getId()).orElseThrow(()->
-                new EntityNotFoundException("Пользователь не найден!"));
+                new EntityNotFoundException(MESSAGES[1]));
         reservation.setUser(user);
 
         Room room = roomRepository.findById(reservation.getRoom().getId()).orElseThrow(()->
-                new EntityNotFoundException("Комната не найдена!"));
+                new EntityNotFoundException(MESSAGES[2]));
         reservation.setRoom(room);
 
         List<LocalDate> requestedDates = reservation.getCheckinDate()
@@ -83,7 +89,7 @@ public class ReservationService implements CrudService<Reservation> {
     @Override
     public Reservation update(Reservation updatedReservation) {
         Reservation existingReservation = reservationRepository.findById(updatedReservation.getId()).orElseThrow(()->
-                new EntityNotFoundException("Запрошенная бронь не найдена!"));
+                new EntityNotFoundException(MESSAGES[0]));
         try {
             nullAwareMapper.copyProperties(existingReservation, updatedReservation);
         } catch (IllegalAccessException | InvocationTargetException e) {

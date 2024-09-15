@@ -11,10 +11,10 @@ spring:
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS app_schema
       connection-timeout: 10000
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:29092
 
 app:
   global-exception-handler:
-    enable: false
+    enable: true
   kafka:
     group-id: "hotel-group-id"
